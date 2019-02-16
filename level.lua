@@ -24,9 +24,9 @@ function Level:initialize(data)
     self.player = nil
 
     self.goals = {
-        wolves = {},
-        sheep = {},
-        cabbages = {}
+        Wolf = {},
+        Sheep = {},
+        Cabbage = {}
     }
 
     self.progress = "INCOMPLETE"
@@ -56,16 +56,19 @@ function Level:initialize(data)
                 table.insert(self.objects, Wolf(self, r, c))
             elseif s == 'w' then
                 t = 4
+                table.insert(self.goals.Wolf, {r=r, c=c})
             elseif s == 'S' then
                 t = 4
                 table.insert(self.objects, Sheep(self, r, c))
             elseif s == 's' then
                 t = 4
+                table.insert(self.goals.Sheep, {r=r, c=c})
             elseif s == 'C' then
                 t = 4
                 table.insert(self.objects, Cabbage(self, r, c))
             elseif s == 'c' then
                 t = 4
+                table.insert(self.goals.Cabbage, {r=r, c=c})
             elseif s == 'P' then
                 t = 4
                 self.player = Player(self, r, c)
@@ -103,9 +106,23 @@ function Level:controlPlayer(dir)
     if self.player:move(dir) then
         self.moveCount = self.moveCount + 1
     end
+
+    self:updateProgess()
 end
 
 function Level:updateProgess()
+    if self.progress ~= "INCOMPLETE" then return end
+
+    for type, _ in pairs(self.goals) do
+        for _, pos in ipairs(self.goals[type]) do
+            local o = self:getObjectAt(pos.r, pos.c)
+            if o == nil then return end
+            if o.class.name ~= type then return end
+        end
+    end
+
+    self.progress = "COMPLETE"
+
     -- INCOMPLETE, FAIL_CABBAGE, FAIL_SHEEP, COMPLETE
 end
 
@@ -130,6 +147,7 @@ function Level:draw()
 
     love.graphics.draw(self.canvas, 0, 0, 0, 2, 2)
     love.graphics.print("Moves: " .. tostring(self.moveCount), 0, 400)
+    love.graphics.print("Progress: " .. tostring(self.progress), 0, 420)
 end
 
 return Level
