@@ -6,7 +6,7 @@ local Wolf = require 'wolf'
 local Sheep = require 'sheep'
 local Cabbage = require 'cabbage'
 
-local MAX_SIZE = 16
+local MAX_LEVEL_SIZE = 16
 
 local TILE_IMAGE = love.graphics.newImage('asset/tile.png')
 local TILE_WATER = love.graphics.newQuad(0, 0, 16, 16, TILE_IMAGE:getDimensions())
@@ -36,8 +36,8 @@ function Level:initialize(data)
 
     self.events = {}
 
-    self.canvas = love.graphics.newCanvas(16*self.width, 16*self.width)
-    self.canvas:setFilter("nearest")
+    self.waterCanvas = love.graphics.newCanvas(16*MAX_LEVEL_SIZE, 16*MAX_LEVEL_SIZE)
+    self.groundCanvas = love.graphics.newCanvas(16*self.width, 16*self.height)
 
     for r=1, self.height do
         self.tiles[r] = {}
@@ -161,8 +161,14 @@ function Level:update(dt)
 end
 
 function Level:draw()
-    love.graphics.setCanvas(self.canvas)
+    love.graphics.setCanvas(self.waterCanvas)
+    for r=1, MAX_LEVEL_SIZE do
+        for c=1, MAX_LEVEL_SIZE do
+            love.graphics.draw(TILE_IMAGE, TILE_WATER, c*16-16, r*16-16)
+        end
+    end
 
+    love.graphics.setCanvas(self.groundCanvas)
     for r=1, self.height do
         for c=1, self.width do
             love.graphics.draw(TILE_IMAGE, TILES[self.tiles[r][c]], c*16-16, r*16-16)
@@ -175,7 +181,14 @@ function Level:draw()
 
     love.graphics.setCanvas()
 
-    love.graphics.draw(self.canvas, 0, 0, 0, 2, 2)
+    love.graphics.draw(self.waterCanvas, 0, 0, 0, 2, 2)
+    love.graphics.draw(
+        self.groundCanvas,
+        math.floor(MAX_LEVEL_SIZE/2-self.width/2)*32,
+        math.floor(MAX_LEVEL_SIZE/2-self.height/2)*32,
+        0, 2, 2
+    )
+
     love.graphics.print("Moves: " .. tostring(self.moveCount), 0, 400)
     love.graphics.print("Progress: " .. tostring(self.progress), 0, 420)
 end
