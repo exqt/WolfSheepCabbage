@@ -100,6 +100,16 @@ function Level:getObjectAt(r, c)
     return nil
 end
 
+function Level:removeObjectAt(r, c)
+    for i, o in ipairs(self.objects) do
+        if o.r == r and o.c == c then
+            return table.remove(self.objects, i)
+        end
+    end
+
+    return nil
+end
+
 function Level:controlPlayer(dir)
     if self.player:push(dir) then
         self.pushCount = self.pushCount + 1
@@ -108,8 +118,6 @@ function Level:controlPlayer(dir)
     if self.player:move(dir) then
         self.moveCount = self.moveCount + 1
     end
-
-    self:updateProgess()
 end
 
 function Level:updateProgess()
@@ -158,6 +166,12 @@ function Level:update(dt)
     end
 
     self.events = {}
+
+    for _, o in ipairs(self.objects) do
+        o:update(dt)
+    end
+
+    self:updateProgess()
 end
 
 function Level:draw()

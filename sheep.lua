@@ -10,7 +10,23 @@ function Sheep:initialize(level, r, c)
 end
 
 function Sheep:update(dt)
+    local objs = self:getAdjacentObjects()
+    local isPlayerNearby = false
+    local cDir = nil
 
+    for i, o in pairs(objs) do
+        if o == nil then
+            -- pass
+        elseif o.class.name == "Player" then
+            isPlayerNearby = true
+        elseif o.class.name == "Cabbage" then
+            cDir = i
+        end
+    end
+
+    if not isPlayerNearby and cDir then
+        self:removeObjectAndMove(cDir)
+    end
 end
 
 function Sheep:draw()

@@ -39,4 +39,24 @@ function Object:setPosition(r, c)
     self.c = c
 end
 
+function Object:getAdjacentObjects()
+    local objs = {}
+    for dir=1, 4 do
+        local nr, nc = self.r + dr[dir], self.c + dc[dir]
+        objs[dir] = self.level:getObjectAt(nr, nc)
+    end
+
+    return objs
+end
+
+function Object:removeObjectAndMove(dir)
+    local nr, nc = self.r + dr[dir], self.c + dc[dir]
+    local o = self.level:getObjectAt(self.r + dr[dir], self.c + dc[dir])
+
+    if o == nil then return nil end
+    self.level:removeObjectAt(nr, nc)
+
+    return self:move(dir)
+end
+
 return Object

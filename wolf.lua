@@ -10,7 +10,20 @@ function Wolf:initialize(level, r, c)
 end
 
 function Wolf:update(dt)
+    local objs = self:getAdjacentObjects()
+    local cDir = nil
 
+    for i, o in pairs(objs) do
+        if o == nil then
+            -- pass
+        elseif o.class.name == "Sheep" then
+            cDir = i
+        end
+    end
+
+    if cDir then
+        self:removeObjectAndMove(cDir)
+    end
 end
 
 function Wolf:draw()
