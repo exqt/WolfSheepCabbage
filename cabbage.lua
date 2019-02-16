@@ -9,7 +9,7 @@ function Cabbage:initialize(level, r, c)
     Object.initialize(self, level, r, c)
 end
 
-function Sheep:update(dt)
+function Cabbage:update(dt)
 
 end
 
