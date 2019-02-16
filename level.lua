@@ -34,6 +34,8 @@ function Level:initialize(data)
     self.pushCount = 0
     self.moveCount = 0
 
+    self.events = {}
+
     self.canvas = love.graphics.newCanvas(16*self.width, 16*self.width)
     self.canvas:setFilter("nearest")
 
@@ -126,8 +128,36 @@ function Level:updateProgess()
     -- INCOMPLETE, FAIL_CABBAGE, FAIL_SHEEP, COMPLETE
 end
 
-function Level:update(dt)
+function Level:keypressed(key)
+    if key == 'w' then
+        table.insert(self.events, "UP")
+    elseif key == 's' then
+        table.insert(self.events, "DOWN")
+    elseif key == 'a' then
+        table.insert(self.events, "LEFT")
+    elseif key == 'd' then
+        table.insert(self.events, "RIGHT")
+    elseif key == 'r' then
+        table.insert(self.events, "RESET")
+    elseif key == 'z' then
+        table.insert(self.events, "UNDO")
+    end
+end
 
+function Level:update(dt)
+    for _, e in ipairs(self.events) do
+        if e == "RIGHT" then
+            self:controlPlayer(1)
+        elseif e == "DOWN" then
+            self:controlPlayer(2)
+        elseif e == "LEFT" then
+            self:controlPlayer(3)
+        elseif e == "UP" then
+            self:controlPlayer(4)
+        end
+    end
+
+    self.events = {}
 end
 
 function Level:draw()
