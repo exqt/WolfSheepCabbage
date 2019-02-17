@@ -138,6 +138,8 @@ function Level:removeObjectAt(r, c)
 end
 
 function Level:controlPlayer(dir)
+    if self.progress ~= "INCOMPLETE" then return end
+
     local player = self.objects.Player[1]
     if player:push(dir) then
         self.pushCount = self.pushCount + 1
@@ -152,6 +154,16 @@ function Level:updateProgess()
     overlay:setText(OVERLAYTEXT[self.progress].main, OVERLAYTEXT[self.progress].sub)
     if self.progress ~= "INCOMPLETE" then return end
 
+    if #self.objects.Sheep ~= #self.goals.Sheep then
+        self.progress = "SHEEP_LOST"
+        return
+    end
+
+    if #self.objects.Cabbage ~= #self.goals.Cabbage then
+        self.progress = "CABBAGE_LOST"
+        return
+    end
+
     for type, _ in pairs(self.goals) do
         for _, pos in ipairs(self.goals[type]) do
             local o = self:getObjectAt(pos.r, pos.c)
@@ -161,8 +173,6 @@ function Level:updateProgess()
     end
 
     self.progress = "COMPLETE"
-
-    -- INCOMPLETE, FAIL_CABBAGE, FAIL_SHEEP, COMPLETE
 end
 
 function Level:keypressed(key)
