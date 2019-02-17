@@ -40,8 +40,12 @@ function Level:initialize(data)
     self.width = #data[1]
     self.tiles = {}
 
-    self.objects = {}
-    self.player = nil
+    self.objects = {
+        Wolf = {},
+        Sheep = {},
+        Cabbage = {},
+        Player = {}
+    }
 
     self.goals = {
         Wolf = {},
@@ -75,26 +79,25 @@ function Level:initialize(data)
                 t = 4
             elseif s == 'W' then
                 t = 4
-                table.insert(self.objects, Wolf(self, r, c))
+                table.insert(self.objects.Wolf, Wolf(self, r, c))
             elseif s == 'w' then
                 t = 4
                 table.insert(self.goals.Wolf, {r=r, c=c})
             elseif s == 'S' then
                 t = 4
-                table.insert(self.objects, Sheep(self, r, c))
+                table.insert(self.objects.Sheep, Sheep(self, r, c))
             elseif s == 's' then
                 t = 4
                 table.insert(self.goals.Sheep, {r=r, c=c})
             elseif s == 'C' then
                 t = 4
-                table.insert(self.objects, Cabbage(self, r, c))
+                table.insert(self.objects.Cabbage, Cabbage(self, r, c))
             elseif s == 'c' then
                 t = 4
                 table.insert(self.goals.Cabbage, {r=r, c=c})
             elseif s == 'P' then
                 t = 4
-                self.player = Player(self, r, c)
-                table.insert(self.objects, self.player)
+                table.insert(self.objects.Player, Player(self, r, c))
             end
 
             self.tiles[r][c] = t
@@ -111,9 +114,11 @@ function Level:getTileAt(r, c)
 end
 
 function Level:getObjectAt(r, c)
-    for _, o in ipairs(self.objects) do
-        if o.r == r and o.c == c then
-            return o
+    for type, _ in pairs(self.objects) do
+        for i, o in ipairs(self.objects[type]) do
+            if o.r == r and o.c == c then
+                return o
+            end
         end
     end
 
@@ -121,9 +126,11 @@ function Level:getObjectAt(r, c)
 end
 
 function Level:removeObjectAt(r, c)
-    for i, o in ipairs(self.objects) do
-        if o.r == r and o.c == c then
-            return table.remove(self.objects, i)
+    for type, _ in pairs(self.objects) do
+        for i, o in ipairs(self.objects[type]) do
+            if o.r == r and o.c == c then
+                return table.remove(self.objects[type], i)
+            end
         end
     end
 
@@ -131,11 +138,12 @@ function Level:removeObjectAt(r, c)
 end
 
 function Level:controlPlayer(dir)
-    if self.player:push(dir) then
+    local player = self.objects.Player[1]
+    if player:push(dir) then
         self.pushCount = self.pushCount + 1
     end
 
-    if self.player:move(dir) then
+    if player:move(dir) then
         self.moveCount = self.moveCount + 1
     end
 end
@@ -188,8 +196,10 @@ function Level:update(dt)
 
     self.events = {}
 
-    for _, o in ipairs(self.objects) do
-        o:update(dt)
+    for type, _ in pairs(self.objects) do
+        for i, o in ipairs(self.objects[type]) do
+            o:update(dt)
+        end
     end
 
     self:updateProgess()
@@ -210,8 +220,10 @@ function Level:draw()
         end
     end
 
-    for _, o in ipairs(self.objects) do
-        o:draw()
+    for type, _ in pairs(self.objects) do
+        for i, o in ipairs(self.objects[type]) do
+            o:draw()
+        end
     end
 
     love.graphics.setCanvas()
