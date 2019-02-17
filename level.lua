@@ -5,6 +5,7 @@ local Player = require 'player'
 local Wolf = require 'wolf'
 local Sheep = require 'sheep'
 local Cabbage = require 'cabbage'
+local overlay = require 'overlay'
 
 local MAX_LEVEL_SIZE = 16
 
@@ -14,6 +15,25 @@ local TILE_HBRIDGE = love.graphics.newQuad(16, 0, 16, 16, TILE_IMAGE:getDimensio
 local TILE_VBRIDGE = love.graphics.newQuad(32, 0, 16, 16, TILE_IMAGE:getDimensions())
 local TILE_GROUND = love.graphics.newQuad(48, 0, 16, 16, TILE_IMAGE:getDimensions())
 local TILES = {TILE_WATER, TILE_HBRIDGE, TILE_VBRIDGE, TILE_GROUND}
+
+local OVERLAYTEXT = {
+    INCOMPLETE = {
+        main = "",
+        sub  = ""
+    },
+    CABBAGE_LOST = {
+        main = "CABBAGE LOST",
+        sub  = "PRESS R TO RESTART\nPRESS Z TO UNDO"
+    },
+    SHEEP_LOST = {
+        main = "SHEEP LOST",
+        sub  = "PRESS R TO RESTART\nPRESS Z TO UNDO"
+    },
+    COMPLETE = {
+        main = "YOU WIN",
+        sub  = "PRESS ANY KEY TO START NEXT LEVEL"
+    }
+}
 
 function Level:initialize(data)
     self.height = #data
@@ -121,6 +141,7 @@ function Level:controlPlayer(dir)
 end
 
 function Level:updateProgess()
+    overlay:setText(OVERLAYTEXT[self.progress].main, OVERLAYTEXT[self.progress].sub)
     if self.progress ~= "INCOMPLETE" then return end
 
     for type, _ in pairs(self.goals) do
