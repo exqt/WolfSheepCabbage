@@ -10,7 +10,7 @@ function Sheep:initialize(level, r, c)
 end
 
 function Sheep:update(dt)
-    local objs = self:getAdjacentObjects()
+    local objs = self:getAdjacentObjects(8)
     local isPlayerNearby = false
     local cDir = nil
 
@@ -19,7 +19,7 @@ function Sheep:update(dt)
             -- pass
         elseif o.class.name == "Player" then
             isPlayerNearby = true
-        elseif o.class.name == "Cabbage" then
+        elseif o.class.name == "Cabbage" and i <= 4 then
             cDir = i
         end
     end

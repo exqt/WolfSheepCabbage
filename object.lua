@@ -1,8 +1,8 @@
 local Class = require 'lib/middleclass'
 local Object = Class('Object')
 
-local dr = {0, 1, 0, -1}
-local dc = {1, 0, -1, 0}
+local dr = {0, 1, 0, -1, 1, 1, -1, -1}
+local dc = {1, 0, -1, 0, -1, 1, -1, 1}
 
 function Object:initialize(level, r, c)
     self.level = level
@@ -39,9 +39,10 @@ function Object:setPosition(r, c)
     self.c = c
 end
 
-function Object:getAdjacentObjects()
+function Object:getAdjacentObjects(nDirs)
+    nDirs = nDirs or 4
     local objs = {}
-    for dir=1, 4 do
+    for dir=1, nDirs do
         local nr, nc = self.r + dr[dir], self.c + dc[dir]
         objs[dir] = self.level:getObjectAt(nr, nc)
     end
