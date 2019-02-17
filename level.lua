@@ -212,6 +212,8 @@ function Level:update(dt)
         end
     end
 
+    overlay:update(dt)
+
     self:updateProgess()
 end
 
@@ -248,6 +250,8 @@ function Level:draw()
 
     love.graphics.print("Moves: " .. tostring(self.moveCount), 0, 400)
     love.graphics.print("Progress: " .. tostring(self.progress), 0, 420)
+
+    overlay:draw()
 end
 
 return Level
