@@ -3,13 +3,21 @@ local anim8 = require 'lib/anim8'
 local Object = require 'object'
 local Sheep = Class('Sheep', Object)
 
-Sheep.static.IMAGE = love.graphics.newImage('asset/sheep.png')
+local IMAGE = love.graphics.newImage('asset/sheep.png')
+local GOAL_QUAD = love.graphics.newQuad(0, 0, 16, 16, IMAGE:getDimensions())
+
+Sheep.static.drawGoal = function(r, c)
+    local cr, cg, cb, ca = love.graphics.getColor()
+    love.graphics.setColor(0, 0, 0, 0.2)
+    love.graphics.draw(IMAGE, GOAL_QUAD, 16*c-16, 16*r-16)
+    love.graphics.setColor(cr, cg, cb, ca)
+end
 
 function Sheep:initialize(level, r, c)
     Object.initialize(self, level, r, c)
 
     self.status = "IDLE"
-    self.grid = anim8.newGrid(16, 16, Sheep.static.IMAGE:getDimensions())
+    self.grid = anim8.newGrid(16, 16, IMAGE:getDimensions())
     self.animation = {
         IDLE = anim8.newAnimation(self.grid('1-1', 1), 1),
         EXCITED = anim8.newAnimation(self.grid('1-2', 1), 0.3)
@@ -42,7 +50,7 @@ function Sheep:update(dt)
 end
 
 function Sheep:draw()
-    self.animation[self.status]:draw(Sheep.static.IMAGE, 16*self.c-16, 16*self.r-16)
+    self.animation[self.status]:draw(IMAGE, 16*self.c-16, 16*self.r-16)
 end
 
 return Sheep

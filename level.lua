@@ -333,6 +333,18 @@ function Level:draw()
         end
     end
 
+    for type, _ in pairs(self.goals) do
+        for i, g in ipairs(self.goals[type]) do
+            local o = self:getObjectAt(g.r, g.c)
+
+            if o ~= nil and o.class.name == type then --skip
+            elseif type == "Sheep"   then Sheep  .static.drawGoal(g.r, g.c)
+            elseif type == "Wolf"    then Wolf   .static.drawGoal(g.r, g.c)
+            elseif type == "Cabbage" then Cabbage.static.drawGoal(g.r, g.c)
+            end
+        end
+    end
+
     love.graphics.setCanvas()
 
     love.graphics.draw(self.waterCanvas, 0, 0, 0, 2, 2)
