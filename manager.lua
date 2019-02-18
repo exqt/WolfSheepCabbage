@@ -19,12 +19,14 @@ function Manager:loadLevel()
 end
 
 function Manager:nextLevel()
-    currentLevelIndex = (currentLevelIndex + 1) % #filenames + 1
+    if currentLevelIndex == #filenames then return end
+    currentLevelIndex = currentLevelIndex + 1
     self:loadLevel()
 end
 
 function Manager:prevLevel()
-    currentLevelIndex = (currentLevelIndex + #filenames - 1) % #filenames + 1
+    if currentLevelIndex == 1 then return end
+    currentLevelIndex = (currentLevelIndex - 1)
     self:loadLevel()
 end
 
