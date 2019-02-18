@@ -12,9 +12,8 @@ end
 
 function Object:move(dir)
     local nr, nc = self.r + dr[dir], self.c + dc[dir]
-
     if
-        self.level:getTileAt(nr, nc) == 1 or
+        self.level:getTileAt(nr, nc) == "WATER" or
         self.level:getObjectAt(nr, nc) ~= nil
     then
         return false

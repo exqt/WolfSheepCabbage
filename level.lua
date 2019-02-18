@@ -10,11 +10,25 @@ local overlay = require 'overlay'
 local MAX_LEVEL_SIZE = 16
 
 local TILE_IMAGE = love.graphics.newImage('asset/tile.png')
-local TILE_WATER = love.graphics.newQuad(0, 0, 16, 16, TILE_IMAGE:getDimensions())
-local TILE_HBRIDGE = love.graphics.newQuad(16, 0, 16, 16, TILE_IMAGE:getDimensions())
-local TILE_VBRIDGE = love.graphics.newQuad(32, 0, 16, 16, TILE_IMAGE:getDimensions())
-local TILE_GROUND = love.graphics.newQuad(48, 0, 16, 16, TILE_IMAGE:getDimensions())
-local TILES = {TILE_WATER, TILE_HBRIDGE, TILE_VBRIDGE, TILE_GROUND}
+local TILES = {
+    WATER = {
+        love.graphics.newQuad(0, 0, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(16, 0, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(0, 16, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(16, 16, 16, 16, TILE_IMAGE:getDimensions()),
+    },
+    HBRIDGE = love.graphics.newQuad(16, 64, 16, 16, TILE_IMAGE:getDimensions()),
+    VBRIDGE = love.graphics.newQuad(0, 64, 16, 16, TILE_IMAGE:getDimensions()),
+    GROUND = {
+        love.graphics.newQuad(0, 32, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(0, 32, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(0, 32, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(0, 32, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(16, 32, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(0, 48, 16, 16, TILE_IMAGE:getDimensions()),
+        love.graphics.newQuad(16, 48, 16, 16, TILE_IMAGE:getDimensions()),
+    }
+}
 
 local OVERLAYTEXT = {
     INCOMPLETE = {
@@ -70,33 +84,33 @@ function Level:initialize(data)
             local t = nil
 
             if s == '.' then
-                t = 1
+                t = "WATER"
             elseif s == '=' then
-                t = 2
+                t = "HBRIDGE"
             elseif s == '|' then
-                t = 3
+                t = "VBRIDGE"
             elseif s == '-' then
-                t = 4
+                t = "GROUND"
             elseif s == 'W' then
-                t = 4
+                t = "GROUND"
                 table.insert(self.objects.Wolf, Wolf(self, r, c))
             elseif s == 'w' then
-                t = 4
+                t = "GROUND"
                 table.insert(self.goals.Wolf, {r=r, c=c})
             elseif s == 'S' then
-                t = 4
+                t = "GROUND"
                 table.insert(self.objects.Sheep, Sheep(self, r, c))
             elseif s == 's' then
-                t = 4
+                t = "GROUND"
                 table.insert(self.goals.Sheep, {r=r, c=c})
             elseif s == 'C' then
-                t = 4
+                t = "GROUND"
                 table.insert(self.objects.Cabbage, Cabbage(self, r, c))
             elseif s == 'c' then
-                t = 4
+                t = "GROUND"
                 table.insert(self.goals.Cabbage, {r=r, c=c})
             elseif s == 'P' then
-                t = 4
+                t = "GROUND"
                 table.insert(self.objects.Player, Player(self, r, c))
             end
 
@@ -110,7 +124,7 @@ function Level:getTileAt(r, c)
         return self.tiles[r][c]
     end
 
-    return 1
+    return "WATER"
 end
 
 function Level:getObjectAt(r, c)
@@ -221,14 +235,23 @@ function Level:draw()
     love.graphics.setCanvas(self.waterCanvas)
     for r=1, MAX_LEVEL_SIZE do
         for c=1, MAX_LEVEL_SIZE do
-            love.graphics.draw(TILE_IMAGE, TILE_WATER, c*16-16, r*16-16)
+            love.graphics.draw(TILE_IMAGE, TILES.WATER[r%2*2+c%2+1], c*16-16, r*16-16)
         end
     end
 
     love.graphics.setCanvas(self.groundCanvas)
     for r=1, self.height do
         for c=1, self.width do
-            love.graphics.draw(TILE_IMAGE, TILES[self.tiles[r][c]], c*16-16, r*16-16)
+            local t = self.tiles[r][c]
+            local q = nil
+
+            if t == "WATER" then
+                -- pass
+            elseif t == "GROUND" then
+                love.graphics.draw(TILE_IMAGE, TILES[t][r*c*r%7+1], c*16-16, r*16-16)
+            else
+                love.graphics.draw(TILE_IMAGE, TILES[t], c*16-16, r*16-16)
+            end
         end
     end
 
