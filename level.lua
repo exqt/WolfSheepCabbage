@@ -72,6 +72,8 @@ function Level:initialize(data)
         Cabbage = {}
     }
 
+    self.history = {}
+
     self.progress = "INCOMPLETE"
 
     self.pushCount = 0
@@ -156,8 +158,55 @@ function Level:removeObjectAt(r, c)
     return nil
 end
 
+function Level:pushState()
+    local s = {
+        Wolf = {},
+        Sheep = {},
+        Cabbage = {},
+        Player = {}
+    }
+
+     for type, _ in pairs(self.objects) do
+        for i, o in ipairs(self.objects[type]) do
+            table.insert(s[type], {r=o.r, c=o.c})
+        end
+    end
+
+    table.insert(self.history, s)
+end
+
+function Level:popState()
+    if #self.history == 0 then return end
+
+    local s = table.remove(self.history, #self.history)
+    local objs = {
+        Wolf = {},
+        Sheep = {},
+        Cabbage = {},
+        Player = {}
+    }
+
+    for type, _ in pairs(s) do
+        local cls = nil
+        if     type == "Player"  then cls = Player
+        elseif type == "Wolf"    then cls = Wolf
+        elseif type == "Sheep"   then cls = Sheep
+        elseif type == "Cabbage" then cls = Cabbage
+        end
+
+        for i, o in ipairs(s[type]) do
+            table.insert(objs[type], cls(self, o.r, o.c))
+        end
+    end
+
+    self.objects = objs
+    self:updateProgess()
+end
+
 function Level:controlPlayer(dir)
     if self.progress ~= "INCOMPLETE" then return end
+
+    self:pushState()
 
     local player = self.objects.Player[1]
     if player:push(dir) then
@@ -167,12 +216,14 @@ function Level:controlPlayer(dir)
     if player:move(dir) then
         self.moveCount = self.moveCount + 1
     end
+
+    local prevPlayer = self.history[#self.history].Player[1]
+    if prevPlayer.r == player.r and prevPlayer.c == player.c then
+        self:popState()
+    end
 end
 
 function Level:updateProgess()
-    overlay:setText(OVERLAYTEXT[self.progress].main, OVERLAYTEXT[self.progress].sub)
-    if self.progress ~= "INCOMPLETE" then return end
-
     if #self.objects.Sheep ~= #self.goals.Sheep then
         self.progress = "SHEEP_LOST"
         SOUNDS["LOST"]:play()
@@ -185,16 +236,24 @@ function Level:updateProgess()
         return
     end
 
+    local complete = true
     for type, _ in pairs(self.goals) do
         for _, pos in ipairs(self.goals[type]) do
             local o = self:getObjectAt(pos.r, pos.c)
-            if o == nil then return end
-            if o.class.name ~= type then return end
+            if o == nil then
+                complete = false
+            elseif o.class.name ~= type then
+                complete = false
+            end
         end
     end
 
-    SOUNDS["CLEAR"]:play()
-    self.progress = "COMPLETE"
+    if complete then
+        SOUNDS["CLEAR"]:play()
+        self.progress = "COMPLETE"
+    else
+        self.progress = "INCOMPLETE"
+    end
 end
 
 function Level:keypressed(key)
@@ -223,6 +282,10 @@ function Level:update(dt)
             self:controlPlayer(3)
         elseif e == "UP" then
             self:controlPlayer(4)
+        elseif e == "RESET" then
+            while #self.history > 0 do self:popState() end
+        elseif e == "UNDO" then
+            self:popState()
         end
     end
 
@@ -234,9 +297,10 @@ function Level:update(dt)
         end
     end
 
+    overlay:setText(OVERLAYTEXT[self.progress].main, OVERLAYTEXT[self.progress].sub)
     overlay:update(dt)
 
-    self:updateProgess()
+    if self.progress == "INCOMPLETE" then self:updateProgess() end
 end
 
 function Level:draw()
