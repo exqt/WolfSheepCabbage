@@ -1,8 +1,8 @@
 local Class = require 'lib/middleclass'
 local Object = Class('Object')
 
-local dr = {0, 1, 0, -1, 1, 1, -1, -1}
-local dc = {1, 0, -1, 0, -1, 1, -1, 1}
+local dr = {0, 1, 0, -1, 1, 1, -1, -1, 0, 2, 0, -2}
+local dc = {1, 0, -1, 0, -1, 1, -1, 1, 2, 0, -2, 0}
 
 function Object:initialize(level, r, c)
     self.level = level
