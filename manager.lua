@@ -17,7 +17,7 @@ function Manager:loadLevel()
     local s = "./level/"..filenames[currentLevelIndex]:sub(0, -5)
     package.loaded[s] = nil
     local l = require(s)
-    currentLevel = Level(l.data)
+    currentLevel = Level(l.name, l.data)
 end
 
 function Manager:nextLevel()
@@ -33,7 +33,10 @@ function Manager:prevLevel()
 end
 
 function Manager:keypressed(key)
-    if key == '[' then
+    if key and currentLevel.progress == "COMPLETE" then
+        self:nextLevel()
+        return
+    elseif key == '[' then
         self:prevLevel()
     elseif key == ']' then
         self:nextLevel()

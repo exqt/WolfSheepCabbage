@@ -54,7 +54,9 @@ local SOUNDS = {
     CLEAR = love.audio.newSource("asset/clear.wav", "static"),
 }
 
-function Level:initialize(data)
+local FONT = love.graphics.newFont('asset/monogram.ttf', 64)
+
+function Level:initialize(name, data)
     self.height = #data
     self.width = #data[1]
     self.tiles = {}
@@ -83,6 +85,10 @@ function Level:initialize(data)
 
     self.waterCanvas = love.graphics.newCanvas(16*MAX_LEVEL_SIZE, 16*MAX_LEVEL_SIZE)
     self.groundCanvas = love.graphics.newCanvas(16*self.width, 16*self.height)
+
+    self.levelNameText = love.graphics.newText(FONT)
+    self.levelNameText:set(name)
+    self.movesText = love.graphics.newText(FONT)
 
     for r=1, self.height do
         self.tiles[r] = {}
@@ -355,8 +361,9 @@ function Level:draw()
         0, 2, 2
     )
 
-    love.graphics.print("Moves: " .. tostring(self.moveCount), 0, 400)
-    love.graphics.print("Progress: " .. tostring(self.progress), 0, 420)
+    self.movesText:set("MOVES: "..tostring(#self.history))
+    love.graphics.draw(self.levelNameText, 32, 512+8)
+    love.graphics.draw(self.movesText, 32, 512+64)
 
     overlay:draw()
 end
