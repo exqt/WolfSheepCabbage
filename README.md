@@ -1,7 +1,9 @@
 # Wolf, Sheep and Cabbage
------
 
 Wolf, Sheep and Cabbage is a Sokoban-like game for [LÖVE Jam 2019](https://itch.io/jam/love2d-jam-2019)
+
+
+[My friend](https://discordapp.com/users/143727007430082560) created some levels (Thanks!)
 
 ## Rules
 - Just like Sokoban, You need to move objects (wolves, sheep and cabbages) to given locations.
