@@ -49,6 +49,11 @@ local OVERLAYTEXT = {
     }
 }
 
+local SOUNDS = {
+    LOST = love.audio.newSource("asset/lost.wav", "static"),
+    CLEAR = love.audio.newSource("asset/clear.wav", "static"),
+}
+
 function Level:initialize(data)
     self.height = #data
     self.width = #data[1]
@@ -170,11 +175,13 @@ function Level:updateProgess()
 
     if #self.objects.Sheep ~= #self.goals.Sheep then
         self.progress = "SHEEP_LOST"
+        SOUNDS["LOST"]:play()
         return
     end
 
     if #self.objects.Cabbage ~= #self.goals.Cabbage then
         self.progress = "CABBAGE_LOST"
+        SOUNDS["LOST"]:play()
         return
     end
 
@@ -186,6 +193,7 @@ function Level:updateProgess()
         end
     end
 
+    SOUNDS["CLEAR"]:play()
     self.progress = "COMPLETE"
 end
 
