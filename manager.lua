@@ -14,7 +14,9 @@ function Manager:initialize()
 end
 
 function Manager:loadLevel()
-    local l = require("./level/"..filenames[currentLevelIndex]:sub(0, -5))
+    local s = "./level/"..filenames[currentLevelIndex]:sub(0, -5)
+    package.loaded[s] = nil
+    local l = require(s)
     currentLevel = Level(l.data)
 end
 
