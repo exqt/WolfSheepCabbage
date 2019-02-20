@@ -263,13 +263,13 @@ function Level:updateProgess()
 end
 
 function Level:keypressed(key)
-    if key == 'w' then
+    if key == 'w' or key == 'up' then
         table.insert(self.events, "UP")
-    elseif key == 's' then
+    elseif key == 's' or key == 'down' then
         table.insert(self.events, "DOWN")
-    elseif key == 'a' then
+    elseif key == 'a' or key == 'left' then
         table.insert(self.events, "LEFT")
-    elseif key == 'd' then
+    elseif key == 'd' or key == 'right' then
         table.insert(self.events, "RIGHT")
     elseif key == 'r' then
         table.insert(self.events, "RESET")

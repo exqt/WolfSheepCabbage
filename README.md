@@ -14,7 +14,7 @@ Wolf, Sheep and Cabbage is a Sokoban-like game for [LÖVE Jam 2019](https://itch
 - Sheep eats cabbage when cabbage is close to sheep UNLESS the player is nearby
 
 ## Controls
-- Moves - W, A, S, D
+- Moves - (W, A, S, D) or arrow keys
 - Restart - R
 - Undo - Z
 - Next/Prev Level - [, ]
