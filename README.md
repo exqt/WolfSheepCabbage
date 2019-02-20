@@ -1,5 +1,7 @@
 # Wolf, Sheep and Cabbage
 
+![screenshot](screenshot.png)
+
 Wolf, Sheep and Cabbage is a Sokoban-like game for [LÖVE Jam 2019](https://itch.io/jam/love2d-jam-2019)
 
 
